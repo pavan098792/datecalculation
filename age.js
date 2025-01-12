@@ -30,7 +30,7 @@ document.getElementById('btn-date').addEventListener('click', () => {
 
     if (startDate && endDate) {
         const diff = calculateDateDifference(startDate, endDate);
-        resultDate.textContent = `Difference: ${diff} day(s).`;
+        resultDate.textContent = `Difference: ${diff.years} year(s), ${diff.months} month(s), and ${diff.days} day(s).`;
     } else {
         resultDate.textContent = 'Please select both start and end dates.';
     }
@@ -39,6 +39,23 @@ document.getElementById('btn-date').addEventListener('click', () => {
 function calculateDateDifference(start, end) {
     const startDate = new Date(start);
     const endDate = new Date(end);
-    const diffTime = Math.abs(endDate - startDate);
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    let years = endDate.getFullYear() - startDate.getFullYear();
+    let months = endDate.getMonth() - startDate.getMonth();
+    let days = endDate.getDate() - startDate.getDate();
+
+    // Adjust for negative days
+    if (days < 0) {
+        months--;
+        const prevMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 0); // Last day of the previous month
+        days += prevMonth.getDate();
+    }
+
+    // Adjust for negative months
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    return { years, months, days };
 }
